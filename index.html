@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>MarketMind AI Pro</title>
+
+    <!-- Bootstrap + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Socket.IO -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+<style>
+    body {
+        background: #0f172a;
+        color: #f1f5f9; /* 🔥 light text */
+    }
+
+    .card {
+        background: #1e293b;
+        border: none;
+        border-radius: 15px;
+        color: #f1f5f9; /* 🔥 fix card text */
+    }
+
+    .form-control, .form-select {
+        background-color: #0f172a;
+        color: white;
+        border: 1px solid #334155;
+    }
+
+    .form-control::placeholder {
+        color: #94a3b8; /* light placeholder */
+    }
+
+    .form-control:focus {
+        background-color: #0f172a;
+        color: white;
+        border-color: #6366f1;
+        box-shadow: none;
+    }
+
+    select {
+        color: white;
+        background-color: #0f172a;
+    }
+
+    .btn-primary {
+        background: #6366f1;
+        border: none;
+    }
+
+    .title {
+        font-size: 28px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .metric {
+        font-size: 22px;
+        font-weight: bold;
+        color: #38bdf8; /* 🔥 highlight numbers */
+    }
+
+    small {
+        color: #94a3b8;
+    }
+
+    h5, h4, p {
+        color: white;
+    }
+</style>
+</head>
+
+<body class="p-4">
+
+<div class="container">
+
+    <!-- Header -->
+    <div class="mb-4">
+        <div class="title">🚀 MarketMind AI Pro</div>
+        <small>Intelligent Market Analytics Dashboard</small>
+    </div>
+
+    <!-- Metrics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card p-3">
+                <div>Model Error</div>
+                <div class="metric">{{ mae }}</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3">
+                <div>Top Category</div>
+                <div class="metric">{{ top_category }}</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3">
+                <div>Growth Category</div>
+                <div class="metric">{{ peak_category }}</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3">
+                <div>Best Category</div>
+                <div class="metric">{{ best_category }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prediction Form -->
+    <div class="card p-4 mb-4">
+        <h5>🔮 Live Prediction</h5>
+
+        <div class="row">
+            <div class="col">
+                <input type="text" id="app_name" class="form-control" placeholder="App Name">
+            </div>
+            <div class="col">
+                <input type="number" id="reviews" class="form-control" placeholder="Reviews">
+            </div>
+            <div class="col">
+                <input type="number" id="installs" class="form-control" placeholder="Installs">
+            </div>
+            <div class="col">
+                <input type="number" id="price" class="form-control" placeholder="Price">
+            </div>
+            <div class="col">
+                <select id="type" class="form-control">
+                    <option>Free</option>
+                    <option>Paid</option>
+                </select>
+            </div>
+        </div>
+
+        <button onclick="predictLive()" class="btn btn-primary mt-3">Predict</button>
+
+        <div class="mt-3">
+            <h4 id="prediction"></h4>
+            <p id="insight"></p>
+        </div>
+    </div>
+
+    <!-- Graphs -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card p-3">
+                <img src="/static/category.png" class="img-fluid">
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card p-3">
+                <img src="/static/importance.png" class="img-fluid">
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const socket = io();
+
+    function predictLive() {
+
+        const data = {
+        app_name: document.getElementById("app_name").value, // ✅ add this
+        reviews: document.getElementById("reviews").value,
+        installs: document.getElementById("installs").value,
+        price: document.getElementById("price").value,
+        type: document.getElementById("type").value
+};
+
+        socket.emit('predict_live', data);
+    }
+
+    socket.on('prediction_result', function(data) {
+        document.getElementById("prediction").innerHTML = "⭐ Prediction: " + data.prediction;
+        document.getElementById("insight").innerHTML = data.insight;
+    });
+</script>
+
+</body>
+</html>
